@@ -6,9 +6,24 @@ items_bp = Blueprint('items', __name__, url_prefix='/api/items')
 
 @items_bp.route('', methods=['GET'])
 def list_items():
-    item_type = request.args.get('type')
-    status = request.args.get('status')
+    args = request.args
+    has_advanced = any(k in args for k in
+                       ['types', 'statuses', 'tag_ids', 'tag_mode',
+                        'min_rating', 'rating_dim', 'rating_dim_min',
+                        'date_from', 'date_to', 'year'])
+    if has_advanced:
+        items = ItemService.list_items_filtered(args)
+        return jsonify(items)
+
+    item_type = args.get('type')
+    status = args.get('status')
     items = ItemService.list_items(item_type, status)
+    return jsonify(items)
+
+
+@items_bp.route('/search', methods=['GET'])
+def search_items():
+    items = ItemService.list_items_filtered(request.args)
     return jsonify(items)
 
 

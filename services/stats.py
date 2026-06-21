@@ -1,5 +1,5 @@
 from datetime import datetime
-from models.repository import ItemRepository
+from models.repository import ItemRepository, TagRepository
 
 
 class StatsService:
@@ -38,6 +38,9 @@ class StatsService:
         else:
             avg_rating_val = None
 
+        tag_top10 = TagRepository.get_tag_top10(year)
+        dimension_avgs = ItemRepository.get_dimension_avgs(year=year)
+
         return {
             'year': year,
             'total_count': len(items),
@@ -50,6 +53,8 @@ class StatsService:
             'monthly_stats': monthly_data,
             'monthly_by_type': monthly_by_type,
             'top_month': max(monthly_data, key=monthly_data.get) if monthly_data else None,
+            'tag_top10': tag_top10,
+            'dimension_avgs': dimension_avgs,
         }
 
     @staticmethod

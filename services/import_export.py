@@ -1,15 +1,28 @@
 import json
-from models.repository import ItemRepository
+from models.repository import ItemRepository, ITEM_RATING_FIELDS
 
 
 class ImportExportService:
     @staticmethod
     def export_all():
         items = ItemRepository.get_all_items()
+        clean_items = []
+        for item in items:
+            clean = {k: item.get(k) for k in [
+                'id', 'title', 'item_type', 'creator', 'tags', 'rating',
+                'rating_writing', 'rating_plot', 'rating_idea',
+                'rating_story', 'rating_acting', 'rating_visual', 'rating_music',
+                'rating_melody', 'rating_lyrics', 'rating_production',
+                'comment', 'status', 'start_date', 'end_date',
+                'total_episodes', 'current_episode', 'sort_order',
+                'created_at', 'updated_at',
+            ]}
+            clean['tag_list'] = item.get('tag_list', [])
+            clean_items.append(clean)
         return {
-            'version': '1.0',
+            'version': '2.0',
             'exported_at': __import__('datetime').datetime.now().isoformat(),
-            'items': items
+            'items': clean_items
         }
 
     @staticmethod
@@ -35,9 +48,10 @@ class ImportExportService:
                 return False, f'Item {i} invalid item_type: {item["item_type"]}'
             if 'status' in item and item['status'] not in valid_statuses:
                 return False, f'Item {i} invalid status: {item["status"]}'
-            if 'rating' in item and item['rating'] is not None:
-                if not isinstance(item['rating'], int) or item['rating'] < 1 or item['rating'] > 5:
-                    return False, f'Item {i} invalid rating'
+            for rk in ['rating'] + ITEM_RATING_FIELDS.get(item['item_type'], []):
+                if rk in item and item[rk] is not None:
+                    if not isinstance(item[rk], int) or item[rk] < 1 or item[rk] > 5:
+                        return False, f'Item {i} invalid {rk}'
         
         return True, None
 
@@ -72,6 +86,16 @@ class ImportExportService:
                 'current_episode': item_data.get('current_episode', 0),
                 'sort_order': item_data.get('sort_order', 0),
             }
+            for rk in ITEM_RATING_FIELDS.get(item_data['item_type'], []):
+                if rk in item_data:
+                    clean_data[rk] = item_data[rk]
+
+            if 'tag_list' in item_data and isinstance(item_data['tag_list'], list):
+                clean_data['tag_names'] = [
+                    t['name'] if isinstance(t, dict) else str(t)
+                    for t in item_data['tag_list']
+                ]
+
             if 'created_at' in item_data:
                 clean_data['created_at'] = item_data['created_at']
                 clean_data['updated_at'] = item_data.get('updated_at', item_data['created_at'])

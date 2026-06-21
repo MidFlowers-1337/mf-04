@@ -1,5 +1,13 @@
 from datetime import datetime
-from models.repository import ItemRepository
+from models.repository import ItemRepository, ITEM_RATING_FIELDS
+
+
+def _validate_rating_dims(item_type, data):
+    fields = ITEM_RATING_FIELDS.get(item_type, [])
+    for f in fields:
+        if f in data and data[f] is not None:
+            if not (1 <= data[f] <= 5):
+                raise ValueError(f'{f} must be between 1 and 5')
 
 
 class ItemService:
@@ -15,6 +23,7 @@ class ItemService:
         if 'status' in data:
             if data['status'] not in ['want', 'doing', 'done']:
                 raise ValueError('status must be want, doing, or done')
+        _validate_rating_dims(data['item_type'], data)
         item_id = ItemRepository.create_item(data)
         return ItemRepository.get_item(item_id)
 
@@ -27,6 +36,61 @@ class ItemService:
         return ItemRepository.list_items(item_type, status)
 
     @staticmethod
+    def list_items_filtered(args):
+        filters = {}
+        if args.get('type'):
+            filters['item_types'] = [t for t in args.getlist('type') if t]
+        elif args.get('types'):
+            filters['item_types'] = [t for t in args.get('types', '').split(',') if t]
+
+        if args.get('status'):
+            filters['statuses'] = [s for s in args.getlist('status') if s]
+        elif args.get('statuses'):
+            filters['statuses'] = [s for s in args.get('statuses', '').split(',') if s]
+
+        if args.get('tag_ids'):
+            filters['tag_ids'] = [int(x) for x in args.get('tag_ids', '').split(',') if x]
+        filters['tag_mode'] = args.get('tag_mode', 'or')
+
+        mr = args.get('min_rating')
+        if mr:
+            try:
+                filters['min_rating'] = int(mr)
+            except ValueError:
+                pass
+
+        dim = args.get('rating_dim')
+        dmin = args.get('rating_dim_min')
+        if dim and dmin:
+            all_dims = set()
+            for f in ITEM_RATING_FIELDS.values():
+                all_dims.update(f)
+            if dim in all_dims:
+                filters['rating_dim'] = dim
+                try:
+                    filters['rating_dim_min'] = int(dmin)
+                except ValueError:
+                    pass
+
+        df = args.get('date_from')
+        if df:
+            filters['date_from'] = df
+        dt = args.get('date_to')
+        if dt:
+            filters['date_to'] = dt
+
+        year = args.get('year')
+        if year:
+            try:
+                filters['year'] = int(year)
+            except ValueError:
+                pass
+
+        if filters:
+            return ItemRepository.list_items_filtered(filters)
+        return ItemRepository.list_items()
+
+    @staticmethod
     def update_item(item_id, data):
         item = ItemRepository.get_item(item_id)
         if not item:
@@ -37,6 +101,7 @@ class ItemService:
         if 'status' in data:
             if data['status'] not in ['want', 'doing', 'done']:
                 raise ValueError('status must be want, doing, or done')
+        _validate_rating_dims(item['item_type'], data)
         ItemRepository.update_item(item_id, data)
         return ItemRepository.get_item(item_id)
 

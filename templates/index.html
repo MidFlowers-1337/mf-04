@@ -38,8 +38,12 @@
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>类型标签</label>
-                        <input type="text" id="tags" placeholder="用逗号分隔，如：科幻, 经典">
+                        <label>标签 <span class="hint">（输入后回车确认）</span></label>
+                        <div class="tag-input-wrapper" id="tag-input">
+                            <div class="tag-input-tags" id="tag-tags"></div>
+                            <input type="text" id="tag-field" placeholder="输入标签，回车添加" autocomplete="off">
+                            <div class="tag-suggestions" id="tag-suggestions"></div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>状态</label>
@@ -49,16 +53,13 @@
                             <option value="done">看过</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>评分</label>
-                        <select id="rating">
-                            <option value="">未评分</option>
-                            <option value="5">★★★★★ 5星</option>
-                            <option value="4">★★★★ 4星</option>
-                            <option value="3">★★★ 3星</option>
-                            <option value="2">★★ 2星</option>
-                            <option value="1">★ 1星</option>
-                        </select>
+                </div>
+                
+                <div class="rating-dim-block">
+                    <div class="rating-dim-title">多维评分</div>
+                    <div class="rating-dim-grid" id="rating-dim-grid"></div>
+                    <div class="rating-dim-avg">
+                        综合分：<span id="rating-avg-preview">未评分</span>
                     </div>
                 </div>
                 
@@ -91,6 +92,89 @@
                 
                 <button type="submit" class="btn btn-primary">添加</button>
             </form>
+        </div>
+        
+        <div class="card">
+            <h2>高级筛选</h2>
+            <div class="filter-bar" id="filter-bar">
+                <div class="filter-row">
+                    <div class="filter-item">
+                        <label>类型</label>
+                        <div class="chip-group" id="filter-types">
+                            <span class="chip" data-value="book">书籍</span>
+                            <span class="chip" data-value="movie">影视</span>
+                            <span class="chip" data-value="music">音乐</span>
+                        </div>
+                    </div>
+                    <div class="filter-item">
+                        <label>状态</label>
+                        <div class="chip-group" id="filter-statuses">
+                            <span class="chip" data-value="want">想看</span>
+                            <span class="chip" data-value="doing">在看</span>
+                            <span class="chip" data-value="done">看过</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="filter-row">
+                    <div class="filter-item filter-tags-item">
+                        <label>标签</label>
+                        <div class="filter-tag-wrap">
+                            <select id="filter-tag-select"><option value="">-- 选择标签 --</option></select>
+                            <div class="chip-group chip-group-selected" id="filter-tags-selected"></div>
+                        </div>
+                        <div class="tag-mode-switch">
+                            逻辑：
+                            <label><input type="radio" name="tag_mode" value="or" checked> 或（任意一个）</label>
+                            <label><input type="radio" name="tag_mode" value="and"> 与（全部包含）</label>
+                        </div>
+                    </div>
+                    <div class="filter-item">
+                        <label>综合最低分</label>
+                        <select id="filter-min-rating">
+                            <option value="">不限</option>
+                            <option value="5">5 星以上</option>
+                            <option value="4">4 星以上</option>
+                            <option value="3">3 星以上</option>
+                            <option value="2">2 星以上</option>
+                            <option value="1">1 星以上</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label>维度筛选</label>
+                        <div class="dim-filter-row">
+                            <select id="filter-rating-dim"><option value="">-- 选择维度 --</option></select>
+                            <select id="filter-rating-dim-min">
+                                <option value="">不限</option>
+                                <option value="5">≥ 5</option>
+                                <option value="4">≥ 4</option>
+                                <option value="3">≥ 3</option>
+                                <option value="2">≥ 2</option>
+                                <option value="1">≥ 1</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="filter-row">
+                    <div class="filter-item">
+                        <label>日期范围</label>
+                        <div class="date-range">
+                            <input type="date" id="filter-date-from">
+                            <span class="date-sep">至</span>
+                            <input type="date" id="filter-date-to">
+                        </div>
+                    </div>
+                    <div class="filter-item">
+                        <label>年份</label>
+                        <select id="filter-year"><option value="">不限</option></select>
+                    </div>
+                    <div class="filter-item filter-actions">
+                        <button class="btn btn-secondary" id="filter-reset">重置</button>
+                    </div>
+                </div>
+                <div class="filter-url-tip">
+                    筛选条件已同步到 URL 中，可直接分享或刷新。
+                </div>
+            </div>
         </div>
         
         <div class="card">
@@ -127,8 +211,12 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>类型标签</label>
-                        <input type="text" id="edit-tags">
+                        <label>标签（回车确认）</label>
+                        <div class="tag-input-wrapper" id="edit-tag-input">
+                            <div class="tag-input-tags" id="edit-tag-tags"></div>
+                            <input type="text" id="edit-tag-field" placeholder="输入标签，回车添加" autocomplete="off">
+                            <div class="tag-suggestions" id="edit-tag-suggestions"></div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>状态</label>
@@ -138,16 +226,12 @@
                             <option value="done">看过</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>评分</label>
-                        <select id="edit-rating">
-                            <option value="">未评分</option>
-                            <option value="5">★★★★★</option>
-                            <option value="4">★★★★</option>
-                            <option value="3">★★★</option>
-                            <option value="2">★★</option>
-                            <option value="1">★</option>
-                        </select>
+                </div>
+                <div class="rating-dim-block">
+                    <div class="rating-dim-title">多维评分</div>
+                    <div class="rating-dim-grid" id="edit-rating-dim-grid"></div>
+                    <div class="rating-dim-avg">
+                        综合分：<span id="edit-rating-avg-preview">未评分</span>
                     </div>
                 </div>
                 <div class="form-row" id="edit-episode-fields">
@@ -157,7 +241,7 @@
                     </div>
                     <div class="form-group">
                         <label>当前集数</label>
-                        <input type="number" id="edit-current_episode" min="0">
+                        <input type="number" id="edit-current_episodes" min="0">
                     </div>
                 </div>
                 <div class="form-row">
@@ -178,6 +262,8 @@
             </form>
         </div>
     </div>
+    
+    <div id="tooltip" class="radar-tooltip"></div>
     
     <script src="/static/js/app.js"></script>
 </body>

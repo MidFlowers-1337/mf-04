@@ -26,15 +26,29 @@
         <div id="stats-content">
             <div class="stats-grid" id="stats-cards"></div>
             
-            <div class="chart-container">
-                <h3>按月消费热力</h3>
-                <svg id="bar-chart" class="bar-chart"></svg>
+            <div class="chart-grid">
+                <div class="chart-container">
+                    <h3>按月消费热力</h3>
+                    <div class="type-legend" id="type-legend"></div>
+                    <svg id="bar-chart" class="bar-chart"></svg>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>类型分布</h3>
+                    <svg id="type-chart" width="100%" height="300"></svg>
+                </div>
             </div>
             
-            <div class="chart-container">
-                <h3>类型分布</h3>
-                <div class="type-legend" id="type-legend"></div>
-                <svg id="type-chart" width="100%" height="300"></svg>
+            <div class="chart-grid">
+                <div class="chart-container">
+                    <h3>标签 Top10</h3>
+                    <div id="tag-top10"></div>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>评分维度平均雷达</h3>
+                    <div id="dimension-radar" style="display: flex; flex-wrap: wrap; gap: 1rem;"></div>
+                </div>
             </div>
         </div>
     </div>
