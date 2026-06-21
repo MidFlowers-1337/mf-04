@@ -72,7 +72,10 @@ class ImportExportService:
                 'current_episode': item_data.get('current_episode', 0),
                 'sort_order': item_data.get('sort_order', 0),
             }
-            ItemRepository.create_item(clean_data)
+            if 'created_at' in item_data:
+                clean_data['created_at'] = item_data['created_at']
+                clean_data['updated_at'] = item_data.get('updated_at', item_data['created_at'])
+            ItemRepository.create_item(clean_data, keep_timestamp='created_at' in item_data)
             imported += 1
         
         return {

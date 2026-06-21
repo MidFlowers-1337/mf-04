@@ -4,18 +4,32 @@ from db import get_db
 
 class ItemRepository:
     @staticmethod
-    def create_item(data):
+    def create_item(data, keep_timestamp=False):
         db = get_db()
-        cursor = db.execute(
-            '''INSERT INTO items (title, item_type, creator, tags, rating, comment, status,
-               start_date, end_date, total_episodes, current_episode, sort_order)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-            (data['title'], data['item_type'], data.get('creator'),
-             data.get('tags'), data.get('rating'), data.get('comment'),
-             data.get('status', 'want'), data.get('start_date'),
-             data.get('end_date'), data.get('total_episodes'),
-             data.get('current_episode', 0), data.get('sort_order', 0))
-        )
+        if keep_timestamp and 'created_at' in data:
+            cursor = db.execute(
+                '''INSERT INTO items (title, item_type, creator, tags, rating, comment, status,
+                   start_date, end_date, total_episodes, current_episode, sort_order,
+                   created_at, updated_at)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                (data['title'], data['item_type'], data.get('creator'),
+                 data.get('tags'), data.get('rating'), data.get('comment'),
+                 data.get('status', 'want'), data.get('start_date'),
+                 data.get('end_date'), data.get('total_episodes'),
+                 data.get('current_episode', 0), data.get('sort_order', 0),
+                 data.get('created_at'), data.get('updated_at', data.get('created_at')))
+            )
+        else:
+            cursor = db.execute(
+                '''INSERT INTO items (title, item_type, creator, tags, rating, comment, status,
+                   start_date, end_date, total_episodes, current_episode, sort_order)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                (data['title'], data['item_type'], data.get('creator'),
+                 data.get('tags'), data.get('rating'), data.get('comment'),
+                 data.get('status', 'want'), data.get('start_date'),
+                 data.get('end_date'), data.get('total_episodes'),
+                 data.get('current_episode', 0), data.get('sort_order', 0))
+            )
         db.commit()
         return cursor.lastrowid
 

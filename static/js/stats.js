@@ -153,39 +153,53 @@ function renderTypeChart(typeBreakdown) {
     let startAngle = -Math.PI / 2;
     let svgContent = '';
     
-    for (const type of types) {
-        const count = typeBreakdown[type] || 0;
-        if (count === 0) continue;
-        
-        const angle = (count / total) * Math.PI * 2;
-        const endAngle = startAngle + angle;
-        
-        const x1 = centerX + radius * Math.cos(startAngle);
-        const y1 = centerY + radius * Math.sin(startAngle);
-        const x2 = centerX + radius * Math.cos(endAngle);
-        const y2 = centerY + radius * Math.sin(endAngle);
-        
-        const largeArc = angle > Math.PI ? 1 : 0;
-        
-        svgContent += `<path d="M ${centerX} ${centerY} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z" 
-            fill="${colors[type]}" opacity="0.8">
-            <title>${labels[type]}: ${count} 个 (${((count / total) * 100).toFixed(1)}%)</title>
-        </path>`;
-        
-        const midAngle = startAngle + angle / 2;
-        const labelX = centerX + (radius * 0.65) * Math.cos(midAngle);
-        const labelY = centerY + (radius * 0.65) * Math.sin(midAngle);
-        
-        if (count > 0) {
+    const nonZeroTypes = types.filter(t => (typeBreakdown[t] || 0) > 0);
+    
+    if (nonZeroTypes.length === 1) {
+        const type = nonZeroTypes[0];
+        const count = typeBreakdown[type];
+        svgContent += `<circle cx="${centerX}" cy="${centerY}" r="${radius}" fill="${colors[type]}" opacity="0.8">
+            <title>${labels[type]}: ${count} 个 (100%)</title>
+        </circle>`;
+        svgContent += `<text x="${centerX}" y="${centerY - 15}" text-anchor="middle" fill="white" font-size="13" font-weight="bold">
+            ${count}
+        </text>`;
+        svgContent += `<text x="${centerX}" y="${centerY + 10}" text-anchor="middle" fill="white" font-size="11">
+            ${labels[type]} (100%)
+        </text>`;
+    } else {
+        for (const type of types) {
+            const count = typeBreakdown[type] || 0;
+            if (count === 0) continue;
+            
+            const angle = (count / total) * Math.PI * 2;
+            const endAngle = startAngle + angle;
+            
+            const x1 = centerX + radius * Math.cos(startAngle);
+            const y1 = centerY + radius * Math.sin(startAngle);
+            const x2 = centerX + radius * Math.cos(endAngle);
+            const y2 = centerY + radius * Math.sin(endAngle);
+            
+            const largeArc = angle > Math.PI ? 1 : 0;
+            
+            svgContent += `<path d="M ${centerX} ${centerY} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z" 
+                fill="${colors[type]}" opacity="0.8">
+                <title>${labels[type]}: ${count} 个 (${((count / total) * 100).toFixed(1)}%)</title>
+            </path>`;
+            
+            const midAngle = startAngle + angle / 2;
+            const labelX = centerX + (radius * 0.65) * Math.cos(midAngle);
+            const labelY = centerY + (radius * 0.65) * Math.sin(midAngle);
+            
             svgContent += `<text x="${labelX}" y="${labelY}" text-anchor="middle" fill="white" font-size="13" font-weight="bold">
                 ${count}
             </text>`;
+            
+            startAngle = endAngle;
         }
-        
-        startAngle = endAngle;
     }
     
-    svgContent += `<text x="${centerX}" y="${centerY + 5}" text-anchor="middle" fill="#333" font-size="16" font-weight="bold">
+    svgContent += `<text x="${centerX}" y="${centerY + radius + 25}" text-anchor="middle" fill="#333" font-size="16" font-weight="bold">
         共 ${total}
     </text>`;
     

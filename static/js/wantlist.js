@@ -128,11 +128,12 @@ async function pinItem(itemId) {
 }
 
 async function startItem(itemId) {
+    const today = new Date().toISOString().split('T')[0];
     try {
         const res = await fetch(`/api/items/${itemId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: 'doing' })
+            body: JSON.stringify({ status: 'doing', start_date: today })
         });
         if (res.ok) {
             loadWantlist();
