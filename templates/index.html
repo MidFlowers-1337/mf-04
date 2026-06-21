@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>书影音追踪 - 首页</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav>
+        <a href="/" class="active">首页</a>
+        <a href="/stats">统计看板</a>
+        <a href="/wantlist">想看清单</a>
+    </nav>
+    
+    <div class="container">
+        <h1>书影音收藏追踪</h1>
+        
+        <div class="card">
+            <h2>新增条目</h2>
+            <div class="tabs">
+                <button class="tab active" data-type="book">书籍</button>
+                <button class="tab" data-type="movie">影视</button>
+                <button class="tab" data-type="music">音乐</button>
+            </div>
+            
+            <form id="item-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>标题 *</label>
+                        <input type="text" id="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label id="creator-label">作者</label>
+                        <input type="text" id="creator">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>类型标签</label>
+                        <input type="text" id="tags" placeholder="用逗号分隔，如：科幻, 经典">
+                    </div>
+                    <div class="form-group">
+                        <label>状态</label>
+                        <select id="status">
+                            <option value="want">想看</option>
+                            <option value="doing">在看</option>
+                            <option value="done">看过</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>评分</label>
+                        <select id="rating">
+                            <option value="">未评分</option>
+                            <option value="5">★★★★★ 5星</option>
+                            <option value="4">★★★★ 4星</option>
+                            <option value="3">★★★ 3星</option>
+                            <option value="2">★★ 2星</option>
+                            <option value="1">★ 1星</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row" id="episode-fields" style="display: none;">
+                    <div class="form-group">
+                        <label>总集数</label>
+                        <input type="number" id="total_episodes" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>当前集数</label>
+                        <input type="number" id="current_episode" min="0" value="0">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>开始日期</label>
+                        <input type="date" id="start_date">
+                    </div>
+                    <div class="form-group">
+                        <label>结束日期</label>
+                        <input type="date" id="end_date">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>短评</label>
+                    <textarea id="comment" rows="2"></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">添加</button>
+            </form>
+        </div>
+        
+        <div class="card">
+            <h2>我的收藏</h2>
+            <div class="tabs">
+                <button class="filter-tab active" data-filter="all">全部</button>
+                <button class="filter-tab" data-filter="book">书籍</button>
+                <button class="filter-tab" data-filter="movie">影视</button>
+                <button class="filter-tab" data-filter="music">音乐</button>
+                <button class="filter-tab" data-filter="doing">在看</button>
+                <button class="filter-tab" data-filter="done">看过</button>
+            </div>
+            <div id="item-list" class="item-list"></div>
+        </div>
+    </div>
+    
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>编辑条目</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="edit-form">
+                <input type="hidden" id="edit-id">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>标题</label>
+                        <input type="text" id="edit-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label id="edit-creator-label">作者</label>
+                        <input type="text" id="edit-creator">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>类型标签</label>
+                        <input type="text" id="edit-tags">
+                    </div>
+                    <div class="form-group">
+                        <label>状态</label>
+                        <select id="edit-status">
+                            <option value="want">想看</option>
+                            <option value="doing">在看</option>
+                            <option value="done">看过</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>评分</label>
+                        <select id="edit-rating">
+                            <option value="">未评分</option>
+                            <option value="5">★★★★★</option>
+                            <option value="4">★★★★</option>
+                            <option value="3">★★★</option>
+                            <option value="2">★★</option>
+                            <option value="1">★</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row" id="edit-episode-fields">
+                    <div class="form-group">
+                        <label>总集数</label>
+                        <input type="number" id="edit-total_episodes" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>当前集数</label>
+                        <input type="number" id="edit-current_episode" min="0">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>开始日期</label>
+                        <input type="date" id="edit-start_date">
+                    </div>
+                    <div class="form-group">
+                        <label>结束日期</label>
+                        <input type="date" id="edit-end_date">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>短评</label>
+                    <textarea id="edit-comment" rows="2"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">保存</button>
+            </form>
+        </div>
+    </div>
+    
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

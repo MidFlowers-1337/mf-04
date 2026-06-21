@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>书影音追踪 - 统计看板</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav>
+        <a href="/">首页</a>
+        <a href="/stats" class="active">统计看板</a>
+        <a href="/wantlist">想看清单</a>
+    </nav>
+    
+    <div class="container">
+        <h1>年度统计看板</h1>
+        
+        <div class="card">
+            <div class="year-selector">
+                <label>选择年份：</label>
+                <select id="year-select"></select>
+            </div>
+        </div>
+        
+        <div id="stats-content">
+            <div class="stats-grid" id="stats-cards"></div>
+            
+            <div class="chart-container">
+                <h3>按月消费热力</h3>
+                <svg id="bar-chart" class="bar-chart"></svg>
+            </div>
+            
+            <div class="chart-container">
+                <h3>类型分布</h3>
+                <div class="type-legend" id="type-legend"></div>
+                <svg id="type-chart" width="100%" height="300"></svg>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/stats.js"></script>
+</body>
+</html>

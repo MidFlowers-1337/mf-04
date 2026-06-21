@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>书影音追踪 - 想看清单</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav>
+        <a href="/">首页</a>
+        <a href="/stats">统计看板</a>
+        <a href="/wantlist" class="active">想看清单</a>
+    </nav>
+    
+    <div class="container">
+        <h1>想看清单</h1>
+        <p style="color: #666; margin-bottom: 1rem;">拖拽排序，点击置顶按钮将条目移到顶部</p>
+        
+        <div id="wantlist"></div>
+        
+        <div class="card">
+            <h3>导入导出</h3>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="exportData()">导出 JSON 备份</button>
+                <label class="btn btn-secondary" style="cursor: pointer;">
+                    导入 JSON
+                    <input type="file" id="import-file" accept=".json" style="display: none;" onchange="importData(event)">
+                </label>
+            </div>
+            <p id="import-result" style="margin-top: 1rem;"></p>
+        </div>
+    </div>
+    
+    <script src="/static/js/wantlist.js"></script>
+</body>
+</html>
