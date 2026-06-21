@@ -1,0 +1,39 @@
+﻿python : Traceback (most recent call last):
+所在位置 行:1 字符: 1
++ python debug_test.py 2>&1 | Out-File -FilePath debug_out.t
+xt -Encodin ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (mos 
+   t recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "D:\mf-04\debug_test.py", line 32, in <module>
+    new_item = ItemService.create_item({
+        'title': '测试-调试用',
+    ...<5 lines>...
+        'rating_idea': 3,
+    })
+  File "D:\mf-04\services\items.py", line 27, in create_item
+    item_id = ItemRepository.create_item(data)
+  File "D:\mf-04\models\repository.py", line 150, in create_
+item
+    cursor = db.execute(
+        f"INSERT INTO items ({cols}) VALUES ({qs})", vals
+    )
+sqlite3.IntegrityError: NOT NULL constraint failed: items.it
+em_type
+DB init OK
+
+现有标签: 2 个
+  #1 科幻 usage=3
+  #2 英剧 usage=3
+
+现有条目: 10 条
+  [book] 时间戳验证-100360 rating=None tags_csv="None" tag_list=[]
+  [book] 时间戳验证-40928 rating=None tags_csv="None" tag_list=[]
+  [book] 时间戳测试书籍 rating=None tags_csv="None" tag_list=[]
+
+=== 测试创建条目 ===
+创建失败: NOT NULL constraint failed: items.item_type
+
+Done
